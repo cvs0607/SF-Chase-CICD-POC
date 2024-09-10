@@ -1,0 +1,66 @@
+# Name of the workflow
+name: validate pull request on develop branch
+
+# Define when the workflow should run
+on:
+  # Trigger the workflow when a push is made to the develop branch
+  pull_request:
+    types: [opened, synchronize]
+    branches: [develop]
+    paths:
+      - 'force-app/**'
+
+# Define the jobs to be run
+jobs:
+  validate-deployment-on-develop-org:
+    # Run on the latest version of Ubuntu
+    runs-on: ubuntu-latest
+
+    # checks whether the user triggered the workflow is not Dependabot
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      # Step 1: Checkout the code from the repository
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history to ensure HEAD^ is available
+
+      # Step 2: Install Salesforce CLI
+      - name: Install Salesforce CLI
+        run: |
+            wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+            mkdir ~/sfdx
+            tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+            echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+            ~/sfdx/bin/sfdx version
+      
+      # Step 3: Install Salesforce git delta plugin
+      - name: 'Installing sfdx git delta'
+        run: | 
+          echo y | sfdx plugins:install sfdx-git-delta
+          sfdx plugins
+
+      # Step 4: Authenticate with the Salesforce org using the SFDX URL directly
+      - name: 'Store SFDX Auth URL in a file'
+        run: |
+          echo ${{ secrets.SFDX_AUTH_URL }} > ./sfdx-auth-url.txt
+
+      - name: 'Authenticate to Dev Org'
+        run: |
+          sfdx auth:sfdxurl:store --sfdx-url-file ./sfdx-auth-url.txt --setdefaultusername --setalias dev-org
+
+       # Step 5: Create delta package using sfdx-git-delta pulgin
+      - name: 'Create delta packages for new, modified or deleted metadata'
+        run: | 
+          mkdir changed-sources
+          sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
+
+      # Step 6: Deploy the metadata to the Salesforce org
+      - name: 'Deploy delta changes - run all tests'
+        run: |
+          sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests  --json
+        
+
+      # Step 7: Run Destructive changes
+      - name: 'Deploy destructive changes (if any)'
+        run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings
