@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <customValue>
-        <fullName>Apple</fullName>
+        <fullName>ant</fullName>
         <default>false</default>
-        <label>Apple</label>
+        <label>ant</label>
     </customValue>
     <customValue>
         <fullName>dog</fullName>
