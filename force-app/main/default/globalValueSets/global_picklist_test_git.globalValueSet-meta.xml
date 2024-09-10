@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Apple</fullName>
+        <default>false</default>
+        <label>Apple</label>
+    </customValue>
+    <customValue>
+        <fullName>dog</fullName>
+        <default>false</default>
+        <label>dog</label>
+    </customValue>
+    <customValue>
+        <fullName>Cat</fullName>
+        <default>false</default>
+        <label>Cat</label>
+    </customValue>
+    <masterLabel>global picklist test git</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>
