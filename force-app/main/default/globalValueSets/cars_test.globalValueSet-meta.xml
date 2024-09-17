@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Tata</fullName>
+        <default>false</default>
+        <label>Tata</label>
+    </customValue>
+    <customValue>
+        <fullName>Kia</fullName>
+        <default>false</default>
+        <label>Kia</label>
+    </customValue>
+    <customValue>
+        <fullName>Nexon</fullName>
+        <default>false</default>
+        <label>Nexon</label>
+    </customValue>
+    <customValue>
+        <fullName>BMW</fullName>
+        <default>false</default>
+        <label>BMW</label>
+    </customValue>
+    <masterLabel>cars test</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>
